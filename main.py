@@ -23,12 +23,12 @@ print(opt)
 
 
 def main():
-    train_data = pickle.load(open('/kaggle/working/tagnn-test/datasets/' + opt.dataset + '/raw/train.txt', 'rb'))
+    train_data = pickle.load(open('../datasets/' + opt.dataset + '/train.txt', 'rb'))
     if opt.validation:
         train_data, valid_data = split_validation(train_data, opt.valid_portion)
         test_data = valid_data
-    else: 
-        test_data = pickle.load(open('/kaggle/working/tagnn-test/datasets/' + opt.dataset + '/raw/test.txt', 'rb'))
+    else:
+        test_data = pickle.load(open('../datasets/' + opt.dataset + '/test.txt', 'rb'))
     # all_train_seq = pickle.load(open('../datasets/' + opt.dataset + '/all_train_seq.txt', 'rb'))
     # g = build_graph(all_train_seq)
     train_data = Data(train_data, shuffle=True)
@@ -42,6 +42,16 @@ def main():
         n_node = 310
 
     model = trans_to_cuda(SessionGraph(opt, n_node))
+
+    # ==================== بخش اضافه شده برای نمایش اطلاعات مدل ====================
+    print('='*80)
+    print('Model Architecture:')
+    print(model)
+    print('-'*80)
+    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f'Total Trainable Parameters: {total_params:,}')
+    print('='*80)
+    # ==========================================================================
 
     start = time.time()
     best_result = [0, 0]
